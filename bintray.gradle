@@ -8,7 +8,7 @@ android {
 
 publish {
     userOrg = 'smartlibs'      // maven 的组织名
-    groupId = 'com.samrt.component' //包名
+    groupId = 'com.samrt.componet' //包名
     artifactId = 'smart-utils'// bintray创建的package
     desc = 'android utils'
     publishVersion = '1.0.0'
