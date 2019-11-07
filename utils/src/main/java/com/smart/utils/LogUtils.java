@@ -1,6 +1,7 @@
 package com.smart.utils;
 
-import android.util.Log;
+import com.tencent.mars.xlog.Log;
+import com.tencent.mars.xlog.Xlog;
 
 /**
  * @date : 2019-07-04 15:05
@@ -10,17 +11,43 @@ import android.util.Log;
  */
 public class LogUtils {
     private final static int MAX_LENGTH = 3500;
+    private final static int LOG_LEVEL_D = 0; //debug
+    private final static int LOG_LEVEL_I = 1; //info
+    private final static int LOG_LEVEL_W = 2; //warn
+    private final static int LOG_LEVEL_E = 3; //error
 
-    private static String DEFAULT_TAG = "SMART";
+
+    private static String DEFAULT_TAG = "smart";
     private static boolean isLog = true;
+
+
+    public static void initXLog(String appName, final String logPath, final String cachePath, boolean isLog) {
+        System.loadLibrary("c++_shared");
+        System.loadLibrary("marsxlog");
+        LogUtils.isLog = isLog;
+
+//        final String SDCARD = Environment.getExternalStorageDirectory().getAbsolutePath();
+//        final String logPath = SDCARD +application.getPackageName()+ "/marssample/log";
+//
+//        // this is necessary, or may crash for SIGBUS
+//        final String cachePath = application.getFilesDir() + "/xlog";
+
+        //init xlog
+        if (isLog) {
+            Xlog.appenderOpen(Xlog.LEVEL_DEBUG, Xlog.AppednerModeAsync, cachePath, logPath, appName, 0, "");
+            Xlog.setConsoleLogOpen(true);
+
+        } else {
+            Xlog.appenderOpen(Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, cachePath, logPath, appName, 0, "");
+            Xlog.setConsoleLogOpen(false);
+        }
+
+        Log.setLogImp(new Xlog());
+    }
 
 
     public static void setDefaultTag(String defaultTag) {
         DEFAULT_TAG = defaultTag;
-    }
-
-    public static void setIsLog(boolean isLog) {
-        LogUtils.isLog = isLog;
     }
 
     /**
@@ -29,9 +56,6 @@ public class LogUtils {
      * @param msg 相关内容
      */
     public static void d(String msg) {
-        if (!isLog) {
-            return;
-        }
         d(DEFAULT_TAG, msg);
     }
 
@@ -43,10 +67,7 @@ public class LogUtils {
      * @param msg 相关内容
      */
     public static void d(String tag, String msg) {
-        if (!isLog) {
-            return;
-        }
-        printLong(0, tag, msg);
+        printLong(LOG_LEVEL_D, tag, msg);
     }
 
 
@@ -56,9 +77,6 @@ public class LogUtils {
      * @param msg 相关内容
      */
     public static void i(String msg) {
-        if (!isLog) {
-            return;
-        }
         i(DEFAULT_TAG, msg);
     }
 
@@ -70,10 +88,7 @@ public class LogUtils {
      * @param msg 相关内容
      */
     public static void i(String tag, String msg) {
-        if (!isLog) {
-            return;
-        }
-        printLong(1, tag, msg);
+        printLong(LOG_LEVEL_I, tag, msg);
     }
 
 
@@ -83,9 +98,6 @@ public class LogUtils {
      * @param msg 相关内容
      */
     public static void w(String msg) {
-        if (!isLog) {
-            return;
-        }
         w(DEFAULT_TAG, msg);
     }
 
@@ -97,10 +109,7 @@ public class LogUtils {
      * @param msg 相关内容
      */
     public static void w(String tag, String msg) {
-        if (!isLog) {
-            return;
-        }
-        printLong(2, tag, msg);
+        printLong(LOG_LEVEL_W, tag, msg);
     }
 
 
@@ -110,9 +119,6 @@ public class LogUtils {
      * @param msg 相关内容
      */
     public static void e(String msg) {
-        if (!isLog) {
-            return;
-        }
         e(DEFAULT_TAG, msg);
     }
 
@@ -124,10 +130,7 @@ public class LogUtils {
      * @param msg 相关内容
      */
     public static void e(String tag, String msg) {
-        if (!isLog) {
-            return;
-        }
-        printLong(3, tag, msg);
+        printLong(LOG_LEVEL_E, tag, msg);
     }
 
 
@@ -154,16 +157,16 @@ public class LogUtils {
             index += maxLength;
 
             switch (level) {
-                case 0: //debug
+                case LOG_LEVEL_D: //debug
                     Log.d(tag, msg);
                     break;
-                case 1: //info
+                case LOG_LEVEL_I: //info
                     Log.i(tag, msg);
                     break;
-                case 2: //warn
+                case LOG_LEVEL_W: //warn
                     Log.w(tag, msg);
                     break;
-                case 3: //error
+                case LOG_LEVEL_E: //error
                     Log.e(tag, msg);
                     break;
                 default:
