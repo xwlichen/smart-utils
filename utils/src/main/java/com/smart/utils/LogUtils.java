@@ -18,27 +18,31 @@ public class LogUtils {
 
 
     private static String DEFAULT_TAG = "smart";
-    private static boolean isLog = true;
 
 
-    public static void initXLog(String appName, final String logPath, final String cachePath, boolean isLog) {
+    /**
+     * @param namePrefix 在logpath 生成的log前缀名
+     * @param logPath    生成xlog的文件的路径
+     * @param cachePath  当 logDir 不可写时候会写进这个目录
+     * @param pubKey     加密所用的 pub_key 为空则默认这只解压不加密
+     * @param cacheDay   一般情况下填0即可。非0表示会在 _cachedir 目录下存放几天的日志。
+     * @param isLog      是否在输出台显示日志
+     */
+    public static void initXLog(final String namePrefix,
+                                final String logPath,
+                                final String cachePath,
+                                final String pubKey,
+                                final int cacheDay,
+                                boolean isLog) {
         System.loadLibrary("c++_shared");
         System.loadLibrary("marsxlog");
-        LogUtils.isLog = isLog;
 
-//        final String SDCARD = Environment.getExternalStorageDirectory().getAbsolutePath();
-//        final String logPath = SDCARD +application.getPackageName()+ "/marssample/log";
-//
-//        // this is necessary, or may crash for SIGBUS
-//        final String cachePath = application.getFilesDir() + "/xlog";
-
-        //init xlog
         if (isLog) {
-            Xlog.appenderOpen(Xlog.LEVEL_DEBUG, Xlog.AppednerModeAsync, cachePath, logPath, appName, 0, "");
+            Xlog.appenderOpen(Xlog.LEVEL_DEBUG, Xlog.AppednerModeAsync, cachePath, logPath, namePrefix, cacheDay, pubKey);
             Xlog.setConsoleLogOpen(true);
 
         } else {
-            Xlog.appenderOpen(Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, cachePath, logPath, appName, 0, "");
+            Xlog.appenderOpen(Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, cachePath, logPath, namePrefix, cacheDay, pubKey);
             Xlog.setConsoleLogOpen(false);
         }
 
@@ -70,6 +74,16 @@ public class LogUtils {
         printLong(LOG_LEVEL_D, tag, msg);
     }
 
+    /**
+     * debug级别日志 （如果日志过长，不建议使用，直接String.formart()返回字符串打印）
+     * @param tag tag
+     * @param format String format
+     * @param objs objs
+     */
+    public static void d(String tag, String format, Object... objs) {
+        Log.e(tag, format, objs);
+    }
+
 
     /**
      * info级别日志
@@ -89,6 +103,16 @@ public class LogUtils {
      */
     public static void i(String tag, String msg) {
         printLong(LOG_LEVEL_I, tag, msg);
+    }
+
+    /**
+     * info级别日志 （如果日志过长，不建议使用，直接String.formart()返回字符串打印）
+     * @param tag tag
+     * @param format String format
+     * @param objs objs
+     */
+    public static void i(String tag, String format, Object... objs) {
+        Log.e(tag, format, objs);
     }
 
 
@@ -114,6 +138,17 @@ public class LogUtils {
 
 
     /**
+     * warn级别日志 （如果日志过长，不建议使用，直接String.formart()返回字符串打印）
+     * @param tag tag
+     * @param format String format
+     * @param objs objs
+     */
+    public static void w(String tag, String format, Object... objs) {
+        Log.w(tag, format, objs);
+    }
+
+
+    /**
      * error级别日志
      *
      * @param msg 相关内容
@@ -131,6 +166,18 @@ public class LogUtils {
      */
     public static void e(String tag, String msg) {
         printLong(LOG_LEVEL_E, tag, msg);
+    }
+
+
+
+    /**
+     * error级别日志 （如果日志过长，不建议使用，直接String.formart()返回字符串打印）
+     * @param tag tag
+     * @param format String format
+     * @param objs objs
+     */
+    public static void e(String tag, String format, Object... objs) {
+        Log.e(tag, format, objs);
     }
 
 
