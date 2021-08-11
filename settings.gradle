@@ -1,2 +1,0 @@
-include ':app', ':utils'
-rootProject.name='smart-utils'
