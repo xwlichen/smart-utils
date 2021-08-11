@@ -39,4 +39,3 @@ dependencies {
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     api 'com.tencent.mars:mars-xlog:1.2.3'
 }
-apply from: '../bintray.gradle'
